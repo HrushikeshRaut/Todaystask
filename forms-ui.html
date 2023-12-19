@@ -1,0 +1,473 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EA108 - Credit form</title>
+        <script src="https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/js/default/form-bundle.js"></script>
+            <script>
+            window.CKEDITOR_BASEPATH = "https://cdn.ckeditor.com/4.10.0/full/";
+        </script>
+        <script src="https://cdn.ckeditor.com/4.10.0/full/ckeditor.js"></script>
+                 <script src="https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/js/default/browser.bundle.min.js"></script>
+          <script src="https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/js/default/browser.vue.min.js"></script>
+               <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" />
+        <link rel="stylesheet" href="https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/css/default/form-bundle.css">
+</head>
+<body>
+<script>
+    try {
+        Sentry.init({
+            dsn: "https://a48d803587394e18a361fb9686626244@o325084.ingest.sentry.io/1835862",
+            tunnel: "/Index/forwardToSentry",
+            integrations: [new Sentry.Integrations.Vue({ Vue, attachProps: true })],
+        });
+    } catch {}
+var formWindow = window.self;
+var form = {
+    appUrl: 'https://leedonline-api-dev.usgbc.org/',
+    postUrl: '',
+    apiPath: '',
+    callerId: '',
+    authInfo: ' ',
+    projectId: '',
+    creditId: '',
+    ratingSystem: 'bDc',
+    fullRatingSystem: 'v4_1.bDc',
+    data: {"splCircumstances":"","splCircumstancesDocs":0,"csrf_token":""},
+    project: {"type":"INP","name":"Sample Form","ratingSystem":{"key":"v4_1.bDc","code":"LEED V4.1 BD+C: DC","return":"LEED v4.1 BD+C: DC","name":"LEED v4.1 BD+C: Data Centers","is":{"v2009":false,"v4":false,"v4_1":true}},"unitType":"IP","typeName":"Individual Project"},
+    credit: {"id":"EA108","shortId":"EA108","name":"Fundamental Refrigerant Management","isEditable":true,"status":"Attempted","statusCode":"C003","formVersion":"V01","formType":"html"},
+    revisionId: '',
+    isPrintMode: false,
+    isCompareMode: false,
+    isSample: true,
+    allowSkipValidation: false,
+    state: {
+        isSaving: 0,
+        files_uploading: 0,
+        files_processing: 0,
+        files_runningAction: 0
+    },
+    cdn: {
+        js: 'https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/js/default',
+        images: 'https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/images/default',
+        css: 'https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/css/default',
+        libs: 'https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/libs'
+    },
+    fileMove: {
+        eligible: 0,
+        from: null,
+        ids: []
+    },
+    draftInfo: {}};
+var pymChild = new pym.Child({
+    id: 'creditHtmlForm'
+});
+</script>
+<div id="load-indicator"></div>
+<script src="https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/js/default/components/form-components.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<div class="ui message sample-handler" style="background:transparent;border-radius:0px;">
+    <div class="header">Sample form</div>
+                <div>You are viewing this form in reference mode and the form data can not be saved.</div>
+        <div style="margin-top:10px;">
+            <button id="sampleEditMode" class="btn-yellow">Switch to save mode</button>
+        </div>
+        <div style="position:absolute;margin-top:-15px;right:10px;">
+        <a href="https://leedonline-api-dev.usgbc.org/Credit/sampleForm" title="Goto selection page">
+            <i class="home icon"></i>
+        </a>
+    </div>
+</div>
+<div id="sampleEditModeDiv" style="display:none;">
+    <div class="ui form">
+        <div class="required field">
+        <label>Form ID</label>
+        <input type="text" minlength="10" maxlength="60" placeholder="Enter your Form ID">
+        <div class="tip" style="display:none;">
+            Form ID must contain atleast one Upper and Lower case letter, number and special character.
+        </div>
+        <div class="note">
+            If you already have your Form ID enter the same to pull the saved data, otherwise enter your preferred Form ID which can be used later to pull all your saved data.<br/>TIP: You may use the same Form ID for different credit forms.
+        </div>
+        <div style="margin-top:10px;"
+            class="g-recaptcha"
+            data-sitekey="6Ldh5Y8UAAAAANI8I7Lpyz45mCIV16Nzf8WynwtC"
+            data-callback="sampleEditModeCaptch"
+            data-expired-callback="captchaReset"
+            data-error-callback="captchaReset">
+        </div>
+        <div class="captcha-action-btns">
+            <button id="sampleEditModeSubmit" class="btn-yellow">Continue</button>
+            <button class="sampleEditModeCancel ui button">Cancel</button>
+        </div>
+    </div>
+</div>
+<div id="samplePdfDownloadDiv" style="display:none;">
+    <div class="ui form">
+        <div style="margin-top:10px;"
+            class="g-recaptcha"
+            data-sitekey="6Ldh5Y8UAAAAANI8I7Lpyz45mCIV16Nzf8WynwtC"
+            data-callback="sampleEditModeCaptch"
+            data-expired-callback="captchaReset"
+            data-error-callback="captchaReset">
+        </div>
+        <div class="captcha-action-btns">
+            <button id="samplePdfDownloadSubmit" class="btn-yellow">Continue</button>
+            <button class="sampleEditModeCancel ui button">Cancel</button>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+var captchaToken = null;
+var captchaReset = function() {
+    captchaToken = null;
+};
+var sampleEditModeCaptch = function(token) {
+    captchaToken = token;
+};
+var notifyMessageCatch = function(obj) {
+    if(form.revisionId == 'ok')
+        $("#samplePdfDownload").show();
+    
+    var bgColor, borderColor;
+    if(obj.type == 'error') {
+        bgColor = '#ffe6e6';
+        borderColor = '#dfaeae';
+    }
+    else if(obj.type == 'success') {
+        bgColor = '#dcfda4';
+        borderColor = '#adca91';
+    }
+    else if(obj.type == 'info') {
+        bgColor = '#cae7f1';
+        borderColor = '#92c1d0';
+    }
+    else if(obj.type == 'warning') {
+        bgColor = '#ffecdb';
+        borderColor = '#dbbea5';
+    }
+    
+    $.blockUI({ 
+        message: obj.message,
+        fadeIn: 700,
+        fadeOut: 700,
+        timeout: 8000,
+        showOverlay: false,
+        centerY: false,
+        css: { 
+            width: '350px',
+            top: '5px',
+            left: '39%',
+            'text-align': 'left',
+            border: '1px solid '+borderColor,
+            padding: '10px 10px 10px 15px',
+            'font-weight': 600,
+            backgroundColor: bgColor,
+            '-webkit-border-radius': '0px',
+            '-moz-border-radius': '0px',
+            'border-radius': '0px',
+            opacity: .8,
+            color: '#000'
+        }
+    });
+};
+$(function() {
+    if(form.revisionId == 'ok')
+        $("#samplePdfDownload").show();
+    
+    $("body").on("click", "#sampleEditMode", function() {
+        captchaReset();
+        $.blockUI({
+            message: $("#sampleEditModeDiv")
+        });
+    });
+    
+    $("body").on("click", ".sampleEditModeCancel", function() {
+        captchaReset();
+        $.unblockUI(); 
+        return false; 
+    });
+    
+    $("body").on("click", "#sampleRefMode", function() {
+        $.blockUI({ message: null });
+        $.post("https://leedonline-api-dev.usgbc.org/Credit/sampleForm/v4_1.bDc/V01/EA108", "cmd=sampleRefMode", function(r) {
+            document.location.reload(true);
+        });
+    });
+    
+    $("body").on("click", "#samplePdfDownload", function() {
+        captchaReset();
+        $.blockUI({
+            message: $("#samplePdfDownloadDiv")
+        });
+    });
+    
+    $("body").on("click", "#samplePdfDownloadSubmit", function() {
+        if(!captchaToken)
+            return false;
+        
+        $("#samplePdfDownloadDiv button").prop("disabled", true);
+        
+        $.post("https://leedonline-api-dev.usgbc.org/Credit/sampleForm/v4_1.bDc/V01/EA108", "cmd=download&token="+captchaToken, function(r) {
+            captchaReset();
+            $.unblockUI();
+            $("#samplePdfDownloadDiv button").prop("disabled", false);
+            
+            if(r.type == 'success')
+                leed.misc.download(r.downloadUrl);
+            else {
+                notifyMessageCatch({
+                    type: 'error',
+                    message: r.message
+                })
+            }
+        }, 'json');
+    });
+    
+    $("body").on("click", "#sampleEditModeSubmit", function() {
+        var id = $("#sampleEditModeDiv input:text").val();
+        id = $.trim(id);
+        
+        
+        if(!/^(?=.{4,})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\~\`\!\@\#\$\%\^\*\)\(\-\_\&\+\=\}\{\:\;\"\'\,\>\<\.\?\/\\\|\]\[]).*$/.test(id)) {
+            $("#sampleEditModeDiv .tip").html('Form ID must contain atleast one Upper and Lower case letter, number and special character.').show();
+            return false;
+        }
+        
+        if(id.length < 10 || id.length > 60) {
+            $("#sampleEditModeDiv .tip").html('Form ID length must be between 10 to 60').show();
+            return false;
+        }
+        
+        $("#sampleEditModeDiv .tip").html('').hide();
+        
+        if(!captchaToken)
+            return false;
+        
+        $("#sampleEditModeDiv button").prop("disabled", true);
+        
+        id = encodeURIComponent(id);
+        
+        $.post("https://leedonline-api-dev.usgbc.org/Credit/sampleForm/v4_1.bDc/V01/EA108", "cmd=sampleEditMode&id="+id+"&token="+captchaToken, function(r) {
+            if(r == 'ok')
+                document.location.reload(true);
+            else {
+                $("#sampleEditModeDiv button").prop("disabled", false);
+                alert(r);
+            }
+        });
+    });
+});
+</script>
+<div id="credit-form" :class="['ui fluid container', { 'leed-form-disabled': !isEditable, 'leed-printable': form.isPrintMode, 'leed-compare-mode': form.isCompareMode, 'sample-view': form.isSample && !form.isPrintMode }]">
+    <leed-header></leed-header>
+    <leed-form-edit-history v-if="isEditable && !form.isSample"></leed-form-edit-history>
+    <template v-if="!isTextMode && !form.isSample && form.revisionId != '' && form.revisionId != 'ok'">
+        <div v-if="!pdfRendering"
+            class="pdf-download"
+            @click="downloadAsPdf"
+            data-tooltip="Download PDF" data-position="left center">
+            <img src="https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/images/default/pdf-download.png" alt=""/>
+        </div>
+        <button v-else class="ui basic loading button pdf-rendering">Rendering</button>
+    </template>
+<div class="ui form" style="max-width:100%">
+
+<!-- view-source:https://leedonline-api-dev.usgbc.org/Credit/sampleForm/v4_1.bNc/V01/PI101 -->
+
+for date
+    
+<div class="grouped fields ttab-3">
+    <div class="field">
+        <div :class="['leed-single-row', { 'leed-val-error': errors.has('dateOfConstComplete') }]">
+            <div style="width:310px;">Date of substantial completion of construction</div>
+            <div style="margin-left:5px;">
+                <input class="hidden"
+                    v-validate="{
+                        required: (d.dateOfConstComplete == '') ?true :false
+                    }"
+                    name="dateOfConstComplete">
+                <vuejs-datepicker v-if="isEditable" placeholder="" 
+                    format="dd MMM yyyy"
+                    v-model="d.dateOfConstComplete"
+                    wrapper-class="dateInputWrapper">
+                </vuejs-datepicker>
+                <input v-else class="leed-small-textbox"
+                    :disabled="true"
+                    :value="leed.misc.date(d.dateOfConstComplete)"
+                    type="text">
+            </div>
+        </div>
+        <p class="fnotes ttab-2">
+            Note: For Design Review, provide the estimated date. Use actual date for Construction or Combined (Standard) review. If this date is more than 2 years paste the present date, provide explanation in Special Circumstances section.</span>
+        </p>
+    </div>
+</div>
+
+for checkbox 
+
+<div class="grouped fields">
+    <div :class="['field', { 'leed-val-error': errors.has('mprAgree') }]">
+        <div class="ui checkbox leed-checkbox">
+            <input type="checkbox"
+                ref="mprAgree"
+                :checked="leed.misc.isChecked(d.mprAgree)"
+                :disabled="!isEditable"
+                v-validate="'required'"
+                name="mprAgree"
+                @change="function(e) {
+                    if(isEditable)
+                        d.mprAgree = e.target.checked ?true:false;
+                }">
+            <label @click="$refs.mprAgree.click()" :style="[{ 'width': isTextMode ?'100%' :'90%' }]">Project complies with all Minimum Program Requirements (Must be in a permanent location on existing land; Must use reasonable LEED boundaries; Must comply with project size requirements).</label>
+        </div>
+    </div>
+</div>
+
+for textbox 
+
+<div class="grouped fields ttab-2">
+    <div class="field">
+        <div :class="['leed-single-row', { 'leed-val-error': errors.has('siteArea') }]">
+            <div style="width:310px;">Gross Floor Area {{ unitType }}</div>
+            <div style="margin-left:5px;">
+                <input v-if="isEditable" v-numeric-only="'d'"
+                    type="text"
+                    class="leed-small-textbox rtl"
+                    v-model="d.siteArea"
+                    v-validate="'required'" data-vv-validate-on="blur" name="siteArea" key="siteArea"
+                    :readonly="!form.isSample">
+                <input v-else class="leed-small-textbox"
+                    type="text"
+                    :disabled="true"
+                    :value="d.siteArea">
+            </div>
+        </div>
+        <p class="fnotes ttab-1">
+            Notes:<br> <span style="margin-left: 10px;">- This value can only be edited in the project's Details tab.</span><br>
+            <span style="margin-left: 10px;">- Please refer to <a href="https://www.usgbc.org/credits/new-construction-existing-buildings-commercial-interiors-core-and-shell-homes-mid-rise-sch-1" target="_blank">MPR 2</a> for additional guidance on defining an appropriate LEED project site boundary.</span>
+        </p>
+    </div>
+</div>
+
+<!-- view-source:https://leedonline-api-dev.usgbc.org/Credit/sampleForm/v4_1.bDc/V01/IP102 -->
+
+for select field 
+
+<div class="grouped fields">
+    <div :class="['field ttab-1', { 'leed-val-error': errors.has('enyPrfmTrgtInfoUnits') }]">
+        <div class="btab-1">Select the unit :</div>
+        <div>                    
+            <select v-if="isEditable" 
+                v-model="d.enyPrfmTrgtInfoUnits"
+                v-validate="'required'"
+                class="leed-text-medium leed-select"
+                name="enyPrfmTrgtInfoUnits">
+                <option v-for="o in unitOptions" :value="o">{{ o }}</option>
+            </select>
+            <div v-else class="data-print-div">{{ d.enyPrfmTrgtInfoUnits }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- view-source:https://leedonline-api-dev.usgbc.org/Credit/sampleForm/v4_1.bDc/V01/LT102 -->
+for radio button 
+
+<div :class="['grouped', 'fields', { 'leed-val-error': errors.has('radio1') }, { 'ttab-1': needMargin() }]">
+    <label class="leed-section-title">Select one of the following:</label>
+    <input class="hidden"
+         v-validate="{
+             required: d.selectedOption == '' ?true :false
+         }"
+         name="radio1">
+    <div class="leed-well-div ttab-1">
+         <div class="grouped fields" @click="isEditable ?d.selectedOption = 'prevDevelopedSite': ''">
+             <div class="ui radio checkbox">
+                 <input type="radio" value="prevDevelopedSite"
+                     v-model="d.selectedOption"
+                     :disabled="!isEditable"
+                     name="selectedOption">
+                 <label class="text-semibold">Option 1. Previously Developed Land {{ pointsMessage }}</label>
+             </div>
+         </div>
+         
+         <div class="grouped fields" @click="isEditable ?d.selectedOption = 'sensitiveLandCrit': ''">
+             <div class="ui radio checkbox">
+                 <input type="radio" value="sensitiveLandCrit"
+                     v-model="d.selectedOption"
+                     :disabled="!isEditable"
+                     name="selectedOption">
+                 <label class="text-semibold">Option 2. Avoidance of Sensitive Land {{ pointsMessage }}</label>
+             </div>
+         </div>
+     </div>
+ </div>
+
+ for 
+</div>
+    <template v-if="isEditable || form.isCompareMode || form.isPrintMode">
+        <div class="ui divider"></div>
+        <div v-if="form.postUrl != ''" class="leed-form-save" style="height:90px;">
+                        <div v-if="isEditable && !isSaving" class="info" :style="{ 'margin-top':'-3px', 'width':$('#credit-form').width()-135+'px' }">
+                <span v-if="!draftIsSaving">
+                    Changes are automatically stored every five seconds. <span v-if="form.draftInfo.savedOn">To delete the draft and revert to the previously saved version, click <a href="javascript:void(0)" id="clearDraft">delete draft</a>.</span> <span v-if="form.revisionId != '' && !form.isSample">To access previously saved versions of this form click the "form revision history" icon in the upper right of the form.</span>
+                    <span v-if="form.draftInfo.savedOn" style="display:block;margin-top:3px;">
+                        Last draft edits on: {{ leed.misc.dateTime(form.draftInfo.savedOn, true) }}
+                    </span>
+                </span>
+                <span v-else>
+                    Saving draft...
+                </span>
+            </div>
+            <template v-if="isEditable">
+                <button v-if="draftIsSaving" class="btn-yellow form-save-button" disabled>
+                    Save
+                </button>
+                <button v-else-if="!isSaving" class="btn-yellow form-save-button" @click="doSave()">
+                    Save
+                </button>
+                <button v-else-if="isSaving" class="btn-yellow form-save-button" disabled>
+                    Saving...
+                </button>
+            </template>
+        </div>
+        <div v-if="form.isSample && form.isPrintMode" class="leed-print-info">-- Form edited time in GMT. Form Generated on Tue, 19 Dec 2023 08:00:14 +0000 --</div>
+        <div v-else-if="form.isPrintMode && !form.isCompareMode" class="leed-print-info">-- File uploaded time, form edited time are in GMT. Form Generated on Tue, 19 Dec 2023 08:00:14 +0000 --</div>
+    </template>
+    <div style="display:none;" v-html="formLoadedIndication"></div>
+</div>
+
+<script>
+var formObj = {
+    data: function data() {
+        var fData = {"showUpload":false,"uploads":{"splCircumstancesDocs":[]}};
+        
+        fData.uploadShow = {
+            splCircumstancesDocs: fData.showUpload
+        };
+        
+        return fData;
+    },
+    
+    mounted: function mounted() {
+        
+    },
+    
+    methods: {
+        doSave: function doSave() {
+            this.saveForm().done(function(r) {
+                leed.caller.sendSuccess(leed.form.saveSuccess.message);
+            }).fail(function(err) {
+                leed.caller.notifyMessage(leed.form.getMessage(err));
+            });
+        }
+    }
+};
+</script>
+<style>
+
+</style><script src="https://d3jo6m3sswg6t0.cloudfront.net/loapi-dev/v76/js/default/form.min.js"></script>
+</body>
+</html>
